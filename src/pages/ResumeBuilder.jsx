@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import ResumeTemplate from "../components/ResumeTemplate";
 import TemplateGallery from "../components/TemplateGallery";
 import { AITip } from "../components/ToolPrimitives";
-import { TEMPLATES, STEPS, initialForm, RESUME_JSON_SHAPE } from "../shared/resumeConstants";
+import { TEMPLATES, STEPS, initialForm, RESUME_JSON_SHAPE, demoResume } from "../shared/resumeConstants";
 import { callGeminiForResume } from "../services/geminiService";
 
 export default function ResumeBuilder({ onBack }) {
@@ -12,7 +12,7 @@ export default function ResumeBuilder({ onBack }) {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [template, setTemplate] = useState("modern_blue");
+  const [template, setTemplate] = useState("atsProfessional");
   const printRef = useRef(null);
 
   if (showGallery) {
@@ -97,6 +97,13 @@ Do not wrap the JSON in backticks. Do not include any text before or after the J
             ))}
           </div>
         )}
+          <div style={{ textAlign: "center", marginTop: 22 }}>
+            <div style={{ background: "#0f172a", borderRadius: 12, padding: 20, display: "inline-block", border: "1px solid #1e3a5f" }}>
+              <div style={{ transform: "scale(0.55)", transformOrigin: "top center", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+                <ResumeTemplate data={resumeData || demoResume} layout={TEMPLATES[template].layout} accent={accent} />
+              </div>
+            </div>
+          </div>
 
         {!resumeData && (
           <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid #1e3a5f", borderRadius: 16, padding: 32, backdropFilter: "blur(10px)" }}>

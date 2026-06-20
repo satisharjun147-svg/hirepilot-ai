@@ -27,15 +27,71 @@ export default function HomeScreen({ onOpen }) {
   );
 
   const companies = ["Google", "Amazon", "Microsoft", "Infosys", "TCS", "Flipkart", "Deloitte", "Accenture"];
+  const howItWorks = [
+    { step: "1", title: "Choose Template" },
+    { step: "2", title: "Enter Details" },
+    { step: "3", title: "AI Creates Resume" },
+    { step: "4", title: "Download PDF" },
+  ];
+
+  const featureTiles = [
+    { icon: "📄", title: "Resume Builder", desc: "Create an ATS-friendly resume in minutes with guided AI." , action: "resume" },
+    { icon: "🎯", title: "ATS Checker", desc: "Score your resume and get clear fixes before you apply.", action: "ats" },
+    { icon: "✉️", title: "Cover Letter Generator", desc: "Write tailored cover letters matched to each job post.", action: "coverletter" },
+    { icon: "💼", title: "LinkedIn Optimizer", desc: "Improve your profile headline, summary, and impact bullets.", action: "linkedin" },
+    { icon: "🎤", title: "Interview Coach", desc: "Practice answers for technical, HR, and behavioral rounds.", action: "interview" },
+    { icon: "🚀", title: "Resume Improver", desc: "Upgrade an existing resume with stronger bullets and clarity.", action: "improve" },
+  ];
+
+  const pricingPlans = [
+    {
+      name: "Free",
+      price: "₹0",
+      items: ["5 resumes", "3 cover letters", "ATS score", "Basic templates"],
+    },
+    {
+      name: "Starter",
+      price: "₹99/month",
+      highlighted: true,
+      items: ["Unlimited resumes", "Premium templates", "LinkedIn optimizer", "Interview coach"],
+    },
+    {
+      name: "Pro",
+      price: "₹299/month",
+      items: ["Everything included", "Priority AI generation", "Future job matching"],
+    },
+  ];
+
+  const templates = [
+    { name: "Modern", tone: "Linear, clean, and recruiter-friendly" },
+    { name: "Professional", tone: "Balanced layout for corporate roles" },
+    { name: "Executive", tone: "High-contrast format for leadership" },
+    { name: "Minimal", tone: "Simple, focused, and distraction-free" },
+    { name: "Creative", tone: "Distinctive for design and media roles" },
+    { name: "Tech", tone: "Built for engineering and product resumes" },
+    { name: "Healthcare", tone: "Structured for clinical and care roles" },
+    { name: "Student", tone: "Great for internships and first jobs" },
+  ];
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#020817,#0a1628,#020817)", color: "#fff", fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ borderBottom: "1px solid #1e3a5f", padding: "16px 24px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 30, height: 30, borderRadius: 7, background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800 }}>H</div>
-          <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: "-0.3px" }}>HirePilot</span>
+      <nav style={{ borderBottom: "1px solid #1e3a5f", padding: "16px 24px", position: "sticky", top: 0, backdropFilter: "blur(14px)", background: "rgba(2,8,23,0.8)", zIndex: 10 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 7, background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800 }}>H</div>
+            <div className="logo" style={{ fontWeight: 800, fontSize: 18, letterSpacing: "-0.3px" }}>HirePilot</div>
+          </div>
+          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap", justifyContent: "center" }}>
+            <a href="#features" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Features</a>
+            <a href="#templates" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Templates</a>
+            <a href="#pricing" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Pricing</a>
+            <a href="#ats" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>ATS Checker</a>
+          </div>
+          <button style={{ background: "rgba(255,255,255,0.06)", border: "1px solid #1e3a5f", color: "#e2e8f0", borderRadius: 999, padding: "10px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+            Login
+          </button>
         </div>
-      </div>
+      </nav>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "56px 24px 40px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
@@ -48,8 +104,15 @@ export default function HomeScreen({ onOpen }) {
             Build a job-winning resume<br />in just <span style={{ background: "linear-gradient(135deg, #60a5fa, #a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>2 minutes</span> with AI
           </h1>
           <p style={{ maxWidth: 620, margin: "0 auto", color: "#94a3b8", fontSize: 17, lineHeight: 1.6 }}>
-            From your first draft to your next offer — build, score, and polish your resume, cover letter, LinkedIn, and interview answers, all powered by AI.
+            Create ATS-friendly resumes, cover letters, LinkedIn profiles, and interview-ready answers in minutes. No design skills required.
           </p>
+
+          <div className="trust-badges" style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginTop: 20 }}>
+            <span style={{ background: "#0f172a", color: "white", padding: "8px 15px", borderRadius: 20, fontSize: 14 }}>✓ ATS Optimized</span>
+            <span style={{ background: "#0f172a", color: "white", padding: "8px 15px", borderRadius: 20, fontSize: 14 }}>✓ 25,000+ Resumes Created</span>
+            <span style={{ background: "#0f172a", color: "white", padding: "8px 15px", borderRadius: 20, fontSize: 14 }}>✓ 4.8/5 User Rating</span>
+            <span style={{ background: "#0f172a", color: "white", padding: "8px 15px", borderRadius: 20, fontSize: 14 }}>✓ Instant PDF Download</span>
+          </div>
 
           <div style={{ display: "flex", gap: 14, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
             <button onClick={() => onOpen("resume")} style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", border: "none", color: "#fff", borderRadius: 10, padding: "14px 30px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
@@ -70,6 +133,18 @@ export default function HomeScreen({ onOpen }) {
           </div>
         </div>
 
+        <section style={{ marginTop: 64 }}>
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 800, marginBottom: 24 }}>How HirePilot Works</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16 }}>
+            {howItWorks.map((item) => (
+              <div key={item.title} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1e3a5f", borderRadius: 16, padding: 24, textAlign: "center" }}>
+                <div style={{ width: 48, height: 48, borderRadius: "50%", margin: "0 auto 14px", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: 18, fontWeight: 800 }}>{item.step}</div>
+                <h3 style={{ margin: 0, fontSize: 18 }}>{item.title}</h3>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div style={{ marginTop: 50, textAlign: "center" }}>
           <div style={{ fontSize: 12, color: "#475569", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 18 }}>Our users have gone on to work at</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 36, flexWrap: "wrap", opacity: 0.6 }}>
@@ -77,36 +152,57 @@ export default function HomeScreen({ onOpen }) {
           </div>
         </div>
 
-        <div style={{ marginTop: 64 }}>
-          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 800, marginBottom: 8 }}>Everything you need to get hired</h2>
+        <section id="features" style={{ marginTop: 64 }}>
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 800, marginBottom: 8 }}>Everything You Need To Get Hired</h2>
           <p style={{ textAlign: "center", color: "#64748b", fontSize: 14.5, marginBottom: 32 }}>Six AI tools, one place — from your first resume draft to your next interview.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20 }}>
-            <FeatureCard icon="📄" title="Create Resume From Scratch" desc="Build an ATS-friendly resume using AI, step by step." onClick={() => onOpen("resume")} />
-            <FeatureCard icon="🚀" title="Improve Existing Resume" desc="Upload your PDF or DOCX resume and let AI rewrite it." onClick={() => onOpen("improve")} />
-            <FeatureCard icon="🎯" title="ATS Checker" desc="Get an ATS score and see exactly what to fix." onClick={() => onOpen("ats")} />
-            <FeatureCard icon="✉️" title="Cover Letter Generator" desc="Generate a tailored cover letter from your resume + job post." onClick={() => onOpen("coverletter")} />
-            <FeatureCard icon="💼" title="LinkedIn Optimizer" desc="Get a headline, About section, and experience bullets." onClick={() => onOpen("linkedin")} />
-            <FeatureCard icon="🎤" title="Interview Coach" desc="Practice technical, HR, and behavioral questions." onClick={() => onOpen("interview")} />
+            {featureTiles.map((feature) => (
+              <FeatureCard
+                key={feature.title}
+                icon={feature.icon}
+                title={feature.title}
+                desc={feature.desc}
+                onClick={() => onOpen(feature.action)}
+                badge={feature.title === "ATS Checker" ? "Popular" : undefined}
+              />
+            ))}
           </div>
-        </div>
+        </section>
 
-        <div style={{ marginTop: 64, textAlign: "center" }}>
-          <h2 style={{ fontSize: 24, marginBottom: 24, fontWeight: 800 }}>Simple, honest pricing</h2>
+        <section id="pricing" style={{ marginTop: 64, textAlign: "center" }}>
+          <h2 style={{ fontSize: 24, marginBottom: 24, fontWeight: 800 }}>Pricing</h2>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            {[
-              { name: "Free", price: "₹0", items: ["3 resumes", "1 template", "PDF download"] },
-              { name: "Resume Pro", price: "₹49", items: ["Unlimited edits", "All templates"] },
-              { name: "Career Pack", price: "₹149", items: ["ATS Score", "Job Match", "Cover Letter", "LinkedIn Optimizer"] },
-              { name: "Premium", price: "₹299", items: ["Interview Coach", "Career Advisor", "Everything else"] },
-            ].map((p) => (
-              <div key={p.name} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1e3a5f", borderRadius: 14, padding: 22, width: 200, textAlign: "left" }}>
-                <div style={{ fontSize: 12, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.name}</div>
-                <div style={{ fontSize: 26, fontWeight: 800, margin: "6px 0 12px" }}>{p.price}</div>
-                {p.items.map((it) => <div key={it} style={{ fontSize: 12.5, color: "#cbd5e1", marginBottom: 6 }}>✓ {it}</div>)}
+            {pricingPlans.map((plan) => (
+              <div key={plan.name} style={{ background: plan.highlighted ? "linear-gradient(180deg, rgba(59,130,246,0.18), rgba(15,23,42,0.9))" : "rgba(15,23,42,0.7)", border: plan.highlighted ? "1px solid #3b82f6" : "1px solid #1e3a5f", borderRadius: 16, padding: 24, width: 240, textAlign: "left", boxShadow: plan.highlighted ? "0 20px 50px rgba(59,130,246,0.15)" : "none" }}>
+                <div style={{ fontSize: 12, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{plan.name}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, margin: "6px 0 12px" }}>{plan.price}</div>
+                {plan.items.map((it) => <div key={it} style={{ fontSize: 13, color: "#cbd5e1", marginBottom: 8 }}>✓ {it}</div>)}
               </div>
             ))}
           </div>
-        </div>
+        </section>
+
+        <section id="templates" style={{ marginTop: 64 }}>
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 800, marginBottom: 8 }}>Resume Templates Gallery</h2>
+          <p style={{ textAlign: "center", color: "#64748b", fontSize: 14.5, marginBottom: 32 }}>Browse clean layouts and choose the style that fits your role.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 16 }}>
+            {templates.map((template) => (
+              <div key={template.name} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1e3a5f", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ height: 180, background: "linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85))", display: "flex", alignItems: "flex-end", justifyContent: "flex-start", padding: 16 }}>
+                  <div style={{ background: "rgba(2,8,23,0.75)", color: "#fff", borderRadius: 12, padding: 12, width: "100%" }}>
+                    <div style={{ height: 10, width: "48%", borderRadius: 999, background: "rgba(255,255,255,0.85)", marginBottom: 8 }} />
+                    <div style={{ height: 8, width: "74%", borderRadius: 999, background: "rgba(255,255,255,0.45)", marginBottom: 6 }} />
+                    <div style={{ height: 8, width: "58%", borderRadius: 999, background: "rgba(255,255,255,0.45)" }} />
+                  </div>
+                </div>
+                <div style={{ padding: 16 }}>
+                  <div style={{ fontWeight: 800, marginBottom: 6 }}>{template.name}</div>
+                  <div style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5 }}>{template.tone}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div style={{ textAlign: "center", marginTop: 70, paddingTop: 24, borderTop: "1px solid #1e3a5f", color: "#475569", fontSize: 12.5 }}>
           HirePilot · Built with AI · Your data stays in your browser

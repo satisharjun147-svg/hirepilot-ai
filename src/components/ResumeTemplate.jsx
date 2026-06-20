@@ -94,35 +94,35 @@ function BandLayout({ data, accent, ref, banner = false }) {
 
 function TimelineLayout({ data, accent, ref }) {
   const { name, jobTitle, contact, summary, experience, education, skills } = data;
-    return <div ref={ref} style={{ ...PAGE_BASE, background: "#fff", color: "#1e293b", padding: "50px 60px" }}>
-      <div style={{ marginBottom: 26 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#0f172a" }}>{name || "Your Name"}</h1>
-        {jobTitle && <div style={{ fontSize: 14, color: accent, fontWeight: 600, marginTop: 4 }}>{jobTitle}</div>}
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8, fontSize: 11.5, color: "#64748b" }}>{contact?.email && <span>{contact.email}</span>}{contact?.phone && <span>· {contact.phone}</span>}{contact?.location && <span>· {contact.location}</span>}</div>
+  return <div ref={ref} style={{ ...PAGE_BASE, background: "#fff", color: "#1e293b", padding: "50px 60px" }}>
+    <div style={{ marginBottom: 26 }}>
+      <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#0f172a" }}>{name || "Your Name"}</h1>
+      {jobTitle && <div style={{ fontSize: 14, color: accent, fontWeight: 600, marginTop: 4 }}>{jobTitle}</div>}
+      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8, fontSize: 11.5, color: "#64748b" }}>{contact?.email && <span>{contact.email}</span>}{contact?.phone && <span>· {contact.phone}</span>}{contact?.location && <span>· {contact.location}</span>}</div>
+    </div>
+
+    {summary && <p style={{ fontSize: 13, lineHeight: 1.6, color: "#334155", marginBottom: 24 }}>{summary}</p>}
+
+    {experience?.length > 0 && <div style={{ marginBottom: 24 }}>
+      <SectionTitle accent={accent}>Experience</SectionTitle>
+      <div style={{ position: "relative", paddingLeft: 22, marginTop: 14 }}>
+        <div style={{ position: "absolute", left: 4, top: 4, bottom: 4, width: 2, background: `${accent}33` }} />
+        {experience.map((exp, i) => <div key={i} style={{ position: "relative", marginBottom: 18 }}>
+          <div style={{ position: "absolute", left: -22, top: 3, width: 10, height: 10, borderRadius: "50%", background: accent, border: "2px solid #fff", boxShadow: `0 0 0 1px ${accent}` }} />
+          <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{exp.role}{exp.company ? `, ${exp.company}` : ""}</span>
+            <span style={{ fontSize: 11.5, color: "#64748b" }}>{exp.duration}</span>
+          </div>
+          <ul style={{ margin: "5px 0 0", paddingLeft: 18 }}>{exp.bullets?.map((b, j) => <li key={j} style={{ fontSize: 12.5, lineHeight: 1.55, color: "#334155", marginBottom: 3 }}>{b}</li>)}</ul>
+        </div>)}
       </div>
+    </div>}
 
-      {summary && <p style={{ fontSize: 13, lineHeight: 1.6, color: "#334155", marginBottom: 24 }}>{summary}</p>}
+    {education?.length > 0 && <div style={{ marginBottom: 22 }}><SectionTitle accent={accent}>Education</SectionTitle><EducationBlock education={education} /></div>}
 
-      {experience?.length > 0 && <div style={{ marginBottom: 24 }}>
-        <SectionTitle accent={accent}>Experience</SectionTitle>
-        <div style={{ position: "relative", paddingLeft: 22, marginTop: 14 }}>
-          <div style={{ position: "absolute", left: 4, top: 4, bottom: 4, width: 2, background: `${accent}33` }} />
-          {experience.map((exp, i) => <div key={i} style={{ position: "relative", marginBottom: 18 }}>
-            <div style={{ position: "absolute", left: -22, top: 3, width: 10, height: 10, borderRadius: "50%", background: accent, border: "2px solid #fff", boxShadow: `0 0 0 1px ${accent}` }} />
-            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
-              <span style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{exp.role}{exp.company ? `, ${exp.company}` : ""}</span>
-              <span style={{ fontSize: 11.5, color: "#64748b" }}>{exp.duration}</span>
-            </div>
-            <ul style={{ margin: "5px 0 0", paddingLeft: 18 }}>{exp.bullets?.map((b, j) => <li key={j} style={{ fontSize: 12.5, lineHeight: 1.55, color: "#334155", marginBottom: 3 }}>{b}</li>)}</ul>
-          </div>)}
-        </div>
-      </div>}
-
-      {education?.length > 0 && <div style={{ marginBottom: 22 }}><SectionTitle accent={accent}>Education</SectionTitle><EducationBlock education={education} /></div>}
-
-      {skills?.length > 0 && <div><SectionTitle accent={accent}>Skills</SectionTitle><SkillPills skills={skills} accent={accent} /></div>}
-    </div>;
-  return <div ref={ref} style={{ ...PAGE_BASE, background: "#fff", color: "#1e293b", padding: "50px 60px" }}><div style={{ marginBottom: 26 }}><h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#0f172a" }}>{name || "Your Name"}</h1>{jobTitle && <div style={{ fontSize: 14, color: accent, fontWeight: 600, marginTop: 4 }}>{jobTitle}</div>}<div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8, fontSize: 11.5, color: "#64748b" }}>{contact?.email && <span>{contact.email}</span>}{contact?.phone && <span>· {contact.phone}</span>}{contact?.location && <span>· {contact.location}</span>}</div></div>{summary && <p style={{ fontSize: 13, lineHeight: 1.6, color: "#334155", marginBottom: 24 }}>{summary}</p>}{experience?.length > 0 && <div style={{ marginBottom: 24 }}><SectionTitle accent={accent}>Experience</SectionTitle><div style={{ position: "relative", paddingLeft: 22, marginTop: 14 }}><div style={{ position: "absolute", left: 4, top: 4, bottom: 4, width: 2, background: `${accent}33` }} />{experience.map((exp, i) => <div key={i} style={{ position: "relative", marginBottom: 18 }}><div style={{ position: "absolute", left: -22, top: 3, width: 10, height: 10, borderRadius: "50%", background: accent, border: "2px solid #fff", boxShadow: `0 0 0 1px ${accent}` }} /><div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}><span style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{exp.role}{exp.company ? `, ${exp.company}` : ""}</span><span style={{ fontSize: 11.5, color: "#64748b" }}>{exp.duration}</span></div><ul style={{ margin: "5px 0 0", paddingLeft: 18 }}>{exp.bullets?.map((b, j) => <li key={j} style={{ fontSize: 12.5, lineHeight: 1.55, color: "#334155", marginBottom: 3 }}>{b}</li>)}</ul></div>)}</div></div>}{education?.length > 0 && <div style={{ marginBottom: 22 }}><SectionTitle accent={accent}>Education</SectionTitle><EducationBlock education={education} /></div>}{skills?.length > 0 && <div><SectionTitle accent={accent}>Skills</SectionTitle><SkillPills skills={skills} accent={accent} /></div>}<AdditionalSections data={data} /></div>;
+    {skills?.length > 0 && <div><SectionTitle accent={accent}>Skills</SectionTitle><SkillPills skills={skills} accent={accent} /></div>}
+    <AdditionalSections data={data} />
+  </div>;
 }
 
 function CompactLayout({ data, accent, ref }) {

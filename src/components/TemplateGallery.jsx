@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import ResumeTemplate from "./ResumeTemplate";
 import { TEMPLATE_GROUPS, TEMPLATES, demoResume } from "../shared/resumeConstants";
 
@@ -68,35 +69,43 @@ const previewData = {
   },
 };
 
-function getPreviewAsset(key) {
-  switch (key) {
-    case "atsProfessional":
-      return "/templates/ats-professional.png";
-    case "atsMinimal":
-      return "/templates/ats-minimal.png";
-    case "executivePro":
-      return "/templates/executive-pro.png";
-    case "corporateBlue":
-      return "/templates/corporate-blue.png";
-    case "dataEngineer":
-      return "/templates/data-engineer.png";
-    case "softwareEngineer":
-      return "/templates/software-engineer.png";
-    case "healthcare":
-      return "/templates/healthcare.png";
-    case "student":
-      return "/templates/student.png";
-    default:
-      return null;
-  }
-}
+// Note: image-based preview assets (/templates/*.png) are no longer used —
+// the "Preview" button now opens a live full-size modal of ResumeTemplate instead,
+// which stays accurate automatically and needs no separate image files to maintain.
 
 function PreviewFrame({ children }) {
+  // The actual resume page is a fixed-width A4-ratio document (794px wide) whose height
+  // varies a lot depending on layout and content (a sidebar layout with 2 jobs + projects +
+  // certifications can run well past 1400px). Previously this frame used a fixed 450px height
+  // with overflow:hidden, which silently cropped the bottom of every preview. Instead, we
+  // measure the real rendered height after mount and scale the frame to fit it exactly, so
+  // the full page — header through the last section — is always visible.
+  const innerRef = useRef(null);
+  const [scale, setScale] = useState(0.34);
+  const FRAME_HEIGHT = 480;
+  const PAGE_WIDTH = 794;
+
+  useLayoutEffect(() => {
+    if (!innerRef.current) return;
+    const measure = () => {
+      const realHeight = innerRef.current?.scrollHeight || 1123;
+      // Fit by whichever dimension is the tighter constraint, so wide layouts (sidebar/band)
+      // and tall layouts (timeline with many bullets) both fit fully within the card.
+      const scaleByHeight = FRAME_HEIGHT / realHeight;
+      const scaleByWidth = 1; // width already matches PAGE_WIDTH container below
+      setScale(Math.min(scaleByHeight, scaleByWidth, 0.4));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(innerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div
       style={{
         width: "100%",
-        height: 450,
+        height: FRAME_HEIGHT,
         borderRadius: 12,
         overflow: "hidden",
         position: "relative",
@@ -104,10 +113,22 @@ function PreviewFrame({ children }) {
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
-        paddingTop: 10,
+        paddingTop: 14,
+        boxShadow: "inset 0 0 0 1px rgba(15,23,42,0.04)",
       }}
     >
-      <div style={{ transform: "scale(0.34)", transformOrigin: "top center", width: 794, pointerEvents: "none" }}>{children}</div>
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: "top center",
+          width: PAGE_WIDTH,
+          pointerEvents: "none",
+          boxShadow: "0 12px 28px rgba(15,23,42,0.18)",
+          borderRadius: 4,
+        }}
+      >
+        <div ref={innerRef}>{children}</div>
+      </div>
     </div>
   );
 }
@@ -176,12 +197,13 @@ function renderTemplatePreview(key) {
 }
 
 export default function TemplateGallery({ onSelect, onSkip, title = "Choose a resume template" }) {
-  const handlePreview = (key) => {
-    const image = getPreviewAsset(key);
-    if (image) {
-      window.open(image, "_blank", "noopener,noreferrer");
-    }
-  };
+  // Previously this opened a static PNG from /public/templates/*.png — those image files
+  // don't exist in the project, so "Preview" silently did nothing. Replaced with a real
+  // full-size modal rendering the same live ResumeTemplate component, so it always matches
+  // the actual generated resume and needs no extra image assets.
+  const [previewKey, setPreviewKey] = useState(null);
+  const handlePreview = (key) => setPreviewKey(key);
+  const closePreview = () => setPreviewKey(null);
 
   const curatedTemplates = Object.entries(TEMPLATES).map(([key, template]) => ({
     key,
@@ -222,24 +244,27 @@ export default function TemplateGallery({ onSelect, onSkip, title = "Choose a re
                     key={template.key}
                     style={{
                       border: "1px solid #1e3a5f",
-                      borderRadius: 16,
-                      padding: 12,
-                      background: "rgba(15,23,42,0.65)",
-                      transition: "border-color 0.15s",
+                      borderRadius: 18,
+                      padding: 14,
+                      background: "linear-gradient(180deg, rgba(15,23,42,0.75), rgba(15,23,42,0.55))",
+                      boxShadow: "0 1px 0 rgba(255,255,255,0.03) inset",
+                      transition: "border-color 0.2s, transform 0.2s",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = template.accent)}
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#1e3a5f")}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = template.accent; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.transform = "translateY(0)"; }}
                   >
-                    <div style={{ width: "100%", height: 450, borderRadius: 12, overflow: "hidden", position: "relative", background: "#fff" }}>
+                    <div style={{ width: "100%", height: 480, borderRadius: 14, position: "relative", background: "#fff" }}>
                       {renderTemplatePreview(template.key)}
-                      <div style={{ position: "absolute", top: 10, right: 10, background: "#3b82f6", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 8px", borderRadius: 20 }}>
-                        Recommended
-                      </div>
+                      {(template.key === "atsProfessional" || template.key === "softwareEngineer") && (
+                        <div style={{ position: "absolute", top: 12, right: 12, background: template.accent, color: "#fff", fontSize: 10.5, fontWeight: 700, padding: "4px 10px", borderRadius: 20, letterSpacing: "0.02em", boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>
+                          ★ Recommended
+                        </div>
+                      )}
                     </div>
 
-                    <div style={{ marginTop: 12 }}>
+                    <div style={{ marginTop: 14 }}>
                       <div style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 14, color: "#fff", fontWeight: 700, marginBottom: 8 }}>{template.name}</div>
+                        <div style={{ fontSize: 15, color: "#fff", fontWeight: 700, marginBottom: 8 }}>{template.name}</div>
                         <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
                           {(template.tags || []).map((tag) => (
                             <span key={tag} style={{ background: "#1e293b", color: "#94a3b8", padding: "3px 8px", borderRadius: 20, fontSize: 10 }}>
@@ -280,6 +305,35 @@ export default function TemplateGallery({ onSelect, onSkip, title = "Choose a re
           </button>
         </div>
       </div>
+
+      {previewKey && (() => {
+        const t = TEMPLATES[previewKey];
+        return (
+          <div
+            onClick={closePreview}
+            style={{ position: "fixed", inset: 0, background: "rgba(2,8,23,0.85)", backdropFilter: "blur(6px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
+          >
+            <div onClick={(e) => e.stopPropagation()} style={{ background: "#0f172a", borderRadius: 18, border: "1px solid #1e3a5f", maxWidth: 900, width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px", borderBottom: "1px solid #1e3a5f" }}>
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>{t.name}</div>
+                  <div style={{ fontSize: 12, color: "#64748b" }}>Full preview with sample content</div>
+                </div>
+                <button onClick={closePreview} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid #1e3a5f", color: "#cbd5e1", borderRadius: 8, width: 32, height: 32, cursor: "pointer", fontSize: 16 }}>✕</button>
+              </div>
+              <div style={{ flex: 1, overflowY: "auto", background: "#1e293b", display: "flex", justifyContent: "center", padding: "28px 0" }}>
+                <div style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.4)" }}>
+                  <ResumeTemplate data={previewData[previewKey] || demoResume} layout={t.layout} accent={t.accent} />
+                </div>
+              </div>
+              <div style={{ padding: "16px 24px", borderTop: "1px solid #1e3a5f", display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={closePreview} style={{ padding: "10px 20px", borderRadius: 8, border: "1px solid #334155", background: "transparent", color: "#cbd5e1", cursor: "pointer", fontSize: 13.5 }}>Close</button>
+                <button onClick={() => { onSelect(previewKey); closePreview(); }} style={{ padding: "10px 24px", borderRadius: 8, border: "none", background: t.accent, color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 13.5 }}>Use This Template</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

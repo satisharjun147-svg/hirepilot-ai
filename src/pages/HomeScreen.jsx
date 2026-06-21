@@ -1,4 +1,16 @@
 export default function HomeScreen({ onOpen }) {
+    let user = null;
+
+  try {
+    const savedUser = localStorage.getItem("user");
+
+    if (savedUser) {
+      user = JSON.parse(savedUser);
+    }
+  } catch (error) {
+    console.error("Invalid user data");
+    localStorage.removeItem("user");
+  }
   const FeatureCard = ({ icon, title, desc, onClick, badge }) => (
     <div
       onClick={onClick}
@@ -62,17 +74,6 @@ export default function HomeScreen({ onOpen }) {
     },
   ];
 
-  const templates = [
-    { name: "Modern", tone: "Linear, clean, and recruiter-friendly" },
-    { name: "Professional", tone: "Balanced layout for corporate roles" },
-    { name: "Executive", tone: "High-contrast format for leadership" },
-    { name: "Minimal", tone: "Simple, focused, and distraction-free" },
-    { name: "Creative", tone: "Distinctive for design and media roles" },
-    { name: "Tech", tone: "Built for engineering and product resumes" },
-    { name: "Healthcare", tone: "Structured for clinical and care roles" },
-    { name: "Student", tone: "Great for internships and first jobs" },
-  ];
-
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#020817,#0a1628,#020817)", color: "#fff", fontFamily: "'Inter', sans-serif" }}>
       <nav style={{ borderBottom: "1px solid #1e3a5f", padding: "16px 24px", position: "sticky", top: 0, backdropFilter: "blur(14px)", background: "rgba(2,8,23,0.8)", zIndex: 10 }}>
@@ -87,9 +88,79 @@ export default function HomeScreen({ onOpen }) {
             <a href="#pricing" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Pricing</a>
             <a href="#ats" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>ATS Checker</a>
           </div>
-          <button style={{ background: "rgba(255,255,255,0.06)", border: "1px solid #1e3a5f", color: "#e2e8f0", borderRadius: 999, padding: "10px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-            Login
-          </button>
+          {user ? (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+    }}
+  >
+    <img
+      src={user.photo}
+      alt=""
+      style={{
+        width: "40px",
+        height: "40px",
+        borderRadius: "50%",
+      }}
+    />
+
+    <div>
+      <div
+        style={{
+          fontSize: "14px",
+          fontWeight: "700",
+          color: "#fff",
+        }}
+      >
+        {user.name}
+      </div>
+
+      <div
+        style={{
+          fontSize: "12px",
+          color: "#94a3b8",
+        }}
+      >
+        {user.email}
+      </div>
+    </div>
+
+    <button
+      onClick={() => {
+        localStorage.removeItem("user");
+        window.location.reload();
+      }}
+      style={{
+        background: "#ef4444",
+        border: "none",
+        color: "#fff",
+        borderRadius: "8px",
+        padding: "8px 12px",
+        cursor: "pointer",
+      }}
+    >
+      Logout
+    </button>
+  </div>
+) : (
+  <button
+    onClick={() => onOpen("login")}
+    style={{
+      background: "rgba(255,255,255,0.06)",
+      border: "1px solid #1e3a5f",
+      color: "#e2e8f0",
+      borderRadius: 999,
+      padding: "10px 18px",
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    Login
+  </button>
+)}
         </div>
       </nav>
 
@@ -177,28 +248,6 @@ export default function HomeScreen({ onOpen }) {
                 <div style={{ fontSize: 12, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{plan.name}</div>
                 <div style={{ fontSize: 28, fontWeight: 800, margin: "6px 0 12px" }}>{plan.price}</div>
                 {plan.items.map((it) => <div key={it} style={{ fontSize: 13, color: "#cbd5e1", marginBottom: 8 }}>✓ {it}</div>)}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="templates" style={{ marginTop: 64 }}>
-          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 800, marginBottom: 8 }}>Resume Templates Gallery</h2>
-          <p style={{ textAlign: "center", color: "#64748b", fontSize: 14.5, marginBottom: 32 }}>Browse clean layouts and choose the style that fits your role.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 16 }}>
-            {templates.map((template) => (
-              <div key={template.name} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1e3a5f", borderRadius: 16, overflow: "hidden" }}>
-                <div style={{ height: 180, background: "linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85))", display: "flex", alignItems: "flex-end", justifyContent: "flex-start", padding: 16 }}>
-                  <div style={{ background: "rgba(2,8,23,0.75)", color: "#fff", borderRadius: 12, padding: 12, width: "100%" }}>
-                    <div style={{ height: 10, width: "48%", borderRadius: 999, background: "rgba(255,255,255,0.85)", marginBottom: 8 }} />
-                    <div style={{ height: 8, width: "74%", borderRadius: 999, background: "rgba(255,255,255,0.45)", marginBottom: 6 }} />
-                    <div style={{ height: 8, width: "58%", borderRadius: 999, background: "rgba(255,255,255,0.45)" }} />
-                  </div>
-                </div>
-                <div style={{ padding: 16 }}>
-                  <div style={{ fontWeight: 800, marginBottom: 6 }}>{template.name}</div>
-                  <div style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5 }}>{template.tone}</div>
-                </div>
               </div>
             ))}
           </div>

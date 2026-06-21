@@ -49,8 +49,14 @@ Keep all facts accurate to the resume — do not invent companies or achievement
   const CopyBtn = ({ text, field }) => <button onClick={() => copyField(text, field)} style={{ background: copiedField === field ? "rgba(34,197,94,0.15)" : "rgba(59,130,246,0.15)", border: `1px solid ${copiedField === field ? "rgba(34,197,94,0.4)" : "rgba(59,130,246,0.4)"}`, color: copiedField === field ? "#4ade80" : "#60a5fa", borderRadius: 6, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer" }}>{copiedField === field ? "✓ Copied" : "Copy"}</button>;
 
   return (
-    <ToolShell title="LinkedIn Optimizer" onBack={onBack}>
-      <div style={panelStyle}>
+    <>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
+        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
+          ← Back to Home
+        </button>
+      </div>
+      <ToolShell title="LinkedIn Optimizer" onBack={onBack}>
+        <div style={panelStyle}>
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#f1f5f9" }}>Optimize your LinkedIn profile</h2>
 
         <label style={labelStyle}>Your resume</label>
@@ -73,7 +79,8 @@ Keep all facts accurate to the resume — do not invent companies or achievement
         {loading && <Spinner label="Crafting your profile content..." />}
 
         {result && <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1px solid #1e3a5f", display: "flex", flexDirection: "column", gap: 24 }}><div><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}><span style={labelStyle}>Headline</span><CopyBtn text={result.headline} field="headline" /></div><div style={{ background: "#0f172a", border: "1px solid #1e3a5f", borderRadius: 8, padding: 14, fontSize: 14, color: "#f1f5f9", fontWeight: 600 }}>{result.headline}</div></div><div><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}><span style={labelStyle}>About section</span><CopyBtn text={result.about} field="about" /></div><pre style={{ background: "#0f172a", border: "1px solid #1e3a5f", borderRadius: 8, padding: 14, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif", fontSize: 13.5, lineHeight: 1.7, color: "#cbd5e1", margin: 0 }}>{result.about}</pre></div>{result.experienceBullets?.map((exp, i) => <div key={i}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}><span style={labelStyle}>{exp.role}</span><CopyBtn text={exp.bullets.join("\n")} field={`exp${i}`} /></div><ul style={{ background: "#0f172a", border: "1px solid #1e3a5f", borderRadius: 8, padding: "14px 14px 14px 30px", margin: 0 }}>{exp.bullets.map((b, j) => <li key={j} style={{ fontSize: 13, color: "#cbd5e1", marginBottom: 6, lineHeight: 1.6 }}>{b}</li>)}</ul></div>)}</div>}
-      </div>
-    </ToolShell>
+        </div>
+      </ToolShell>
+    </>
   );
 }

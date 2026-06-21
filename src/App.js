@@ -6,6 +6,7 @@ import ATSChecker from "./pages/ATSChecker";
 import CoverLetter from "./pages/CoverLetter";
 import LinkedInOptimizer from "./pages/LinkedInOptimizer";
 import InterviewCoach from "./pages/InterviewCoach";
+import Login from "./pages/Login";
 
 export default function AIResumeBuilder() {
   const [homeScreen, setHomeScreen] = useState(true);
@@ -48,6 +49,10 @@ export default function AIResumeBuilder() {
   if (activeFeature === "interview") {
     return <InterviewCoach onBack={goHome} />;
   }
+
+  if (activeFeature === "login") {
+  return <Login onBack={goHome} />;
+}
 
   return <HomeScreen onOpen={openFeature} />;
 }

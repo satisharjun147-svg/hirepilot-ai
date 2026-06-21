@@ -51,8 +51,14 @@ Write a complete cover letter, 3-4 paragraphs, that connects the candidate's rea
   };
 
   return (
-    <ToolShell title="Cover Letter Generator" onBack={onBack}>
-      <div style={panelStyle}>
+    <>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
+        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
+          ← Back to Home
+        </button>
+      </div>
+      <ToolShell title="Cover Letter Generator" onBack={onBack}>
+        <div style={panelStyle}>
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#f1f5f9" }}>Generate a tailored cover letter</h2>
 
         <label style={labelStyle}>Your resume</label>
@@ -82,7 +88,8 @@ Write a complete cover letter, 3-4 paragraphs, that connects the candidate's rea
         {loading && <Spinner label="Writing your cover letter..." />}
 
         {letter && <div style={{ marginTop: 24 }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}><span style={{ fontSize: 13, fontWeight: 600, color: "#4ade80" }}>✓ Cover letter ready</span><button onClick={copyLetter} style={{ background: copied ? "rgba(34,197,94,0.15)" : "rgba(59,130,246,0.15)", border: `1px solid ${copied ? "rgba(34,197,94,0.4)" : "rgba(59,130,246,0.4)"}`, color: copied ? "#4ade80" : "#60a5fa", borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{copied ? "✓ Copied!" : "Copy"}</button></div><pre style={{ background: "#0f172a", border: `1px solid ${TEMPLATES[template].accent}40`, borderRadius: 10, padding: 20, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif", fontSize: 13.5, lineHeight: 1.7, color: "#cbd5e1" }}>{letter}</pre></div>}
-      </div>
-    </ToolShell>
+        </div>
+      </ToolShell>
+    </>
   );
 }

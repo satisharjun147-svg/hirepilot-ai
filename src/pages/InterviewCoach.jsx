@@ -65,8 +65,14 @@ Give 3 questions per category, 9 total. Sample answers should reference the cand
   );
 
   return (
-    <ToolShell title="Interview Coach" onBack={onBack}>
-      <div style={panelStyle}>
+    <>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
+        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
+          ← Back to Home
+        </button>
+      </div>
+      <ToolShell title="Interview Coach" onBack={onBack}>
+        <div style={panelStyle}>
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#f1f5f9" }}>Prepare for your interview</h2>
 
         <label style={labelStyle}>Your resume</label>
@@ -89,7 +95,8 @@ Give 3 questions per category, 9 total. Sample answers should reference the cand
         {loading && <Spinner label="Preparing your interview questions..." />}
 
         {result && <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1px solid #1e3a5f" }}><p style={{ fontSize: 12.5, color: "#64748b", marginBottom: 20 }}>Tap a question to see a sample answer.</p><Section title="Technical Questions" items={result.technical} prefix="t" color={TEMPLATES[template].accent} /><Section title="Behavioral Questions" items={result.behavioral} prefix="b" color="#a78bfa" /><Section title="HR Questions" items={result.hr} prefix="h" color="#4ade80" /></div>}
-      </div>
-    </ToolShell>
+        </div>
+      </ToolShell>
+    </>
   );
 }

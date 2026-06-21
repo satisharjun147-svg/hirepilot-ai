@@ -62,8 +62,14 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
   );
 
   return (
-    <ToolShell title="ATS Checker" onBack={onBack}>
-      <div style={panelStyle}>
+    <>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
+        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
+          ← Back to Home
+        </button>
+      </div>
+      <ToolShell title="ATS Checker" onBack={onBack}>
+        <div style={panelStyle}>
         <div style={{ marginBottom: 24 }}>
           <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 6, color: "#f1f5f9" }}>ATS Score Checker</h2>
           <p style={{ color: "#64748b", fontSize: 14, margin: 0 }}>Upload a resume or paste text below, then score it against an optional job description.</p>
@@ -106,7 +112,8 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
             <Section title="Recommendations" accent="#fb7185" items={result.recommendations} emptyMessage="No recommendations at this time." />
           </div>
         )}
-      </div>
-    </ToolShell>
+        </div>
+      </ToolShell>
+    </>
   );
 }

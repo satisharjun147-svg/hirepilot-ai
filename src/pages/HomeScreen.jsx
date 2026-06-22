@@ -1,5 +1,5 @@
 export default function HomeScreen({ onOpen }) {
-    let user = null;
+  let user = null;
 
   try {
     const savedUser = localStorage.getItem("user");
@@ -11,6 +11,7 @@ export default function HomeScreen({ onOpen }) {
     console.error("Invalid user data");
     localStorage.removeItem("user");
   }
+
   const FeatureCard = ({ icon, title, desc, onClick, badge }) => (
     <div
       onClick={onClick}
@@ -88,79 +89,137 @@ export default function HomeScreen({ onOpen }) {
             <a href="#pricing" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Pricing</a>
             <a href="#ats" style={{ color: "#cbd5e1", textDecoration: "none", fontSize: 14, fontWeight: 600 }}>ATS Checker</a>
           </div>
+          
           {user ? (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "12px",
-    }}
-  >
-    <img
-      src={user.photo}
-      alt=""
-      style={{
-        width: "40px",
-        height: "40px",
-        borderRadius: "50%",
-      }}
-    />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <img
+                src={user.photo}
+                alt=""
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                }}
+              />
 
-    <div>
-      <div
-        style={{
-          fontSize: "14px",
-          fontWeight: "700",
-          color: "#fff",
-        }}
-      >
-        {user.name}
-      </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    color: "#fff",
+                  }}
+                >
+                  {user.name}
+                </div>
 
-      <div
-        style={{
-          fontSize: "12px",
-          color: "#94a3b8",
-        }}
-      >
-        {user.email}
-      </div>
-    </div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#94a3b8",
+                  }}
+                >
+                  {user.email}
+                </div>
+              </div>
 
-    <button
-      onClick={() => {
-        localStorage.removeItem("user");
-        window.location.reload();
-      }}
-      style={{
-        background: "#ef4444",
-        border: "none",
-        color: "#fff",
-        borderRadius: "8px",
-        padding: "8px 12px",
-        cursor: "pointer",
-      }}
-    >
-      Logout
-    </button>
-  </div>
-) : (
-  <button
-    onClick={() => onOpen("login")}
-    style={{
-      background: "rgba(255,255,255,0.06)",
-      border: "1px solid #1e3a5f",
-      color: "#e2e8f0",
-      borderRadius: 999,
-      padding: "10px 18px",
-      fontSize: 14,
-      fontWeight: 700,
-      cursor: "pointer",
-    }}
-  >
-    Login
-  </button>
-)}
+              <button
+                onClick={() => onOpen("myresumes")}
+                style={{
+                  background: "#2563eb",
+                  border: "none",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                My Resumes
+              </button>
+
+              <button
+                onClick={() => onOpen("mycoverletters")}
+                style={{
+                  background: "#8b5cf6", 
+                  border: "none",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                My Cover Letters
+              </button>
+
+              <button
+                onClick={() => onOpen("myatsreports")}
+                style={{
+                  background: "#10b981", 
+                  border: "none",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                My ATS Reports
+              </button>
+
+              {/* Added Dashboard Button Here */}
+              <button
+                onClick={() => onOpen("dashboard")}
+                style={{
+                  background: "#f59e0b",
+                  border: "none",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                Dashboard
+              </button>
+
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                }}
+                style={{
+                  background: "#ef4444",
+                  border: "none",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => onOpen("login")}
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid #1e3a5f",
+                color: "#e2e8f0",
+                borderRadius: 999,
+                padding: "10px 18px",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Login
+            </button>
+          )}
         </div>
       </nav>
 

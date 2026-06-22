@@ -7,6 +7,10 @@ import CoverLetter from "./pages/CoverLetter";
 import LinkedInOptimizer from "./pages/LinkedInOptimizer";
 import InterviewCoach from "./pages/InterviewCoach";
 import Login from "./pages/Login";
+import MyResumes from "./pages/MyResumes";
+import MyCoverLetters from "./pages/MyCoverLetters";
+import MyATSReports from "./pages/MyATSReports";
+import Dashboard from "./pages/Dashboard"; // Added Import
 
 export default function AIResumeBuilder() {
   const [homeScreen, setHomeScreen] = useState(true);
@@ -50,9 +54,26 @@ export default function AIResumeBuilder() {
     return <InterviewCoach onBack={goHome} />;
   }
 
+  if (activeFeature === "myresumes") {
+    return <MyResumes onBack={goHome} />;
+  }
+
+  if (activeFeature === "mycoverletters") {
+    return <MyCoverLetters onBack={goHome} />;
+  }
+
+  if (activeFeature === "myatsreports") {
+    return <MyATSReports onBack={goHome} />;
+  }
+
+  // Added Route for Dashboard
+  if (activeFeature === "dashboard") {
+    return <Dashboard onBack={goHome} />;
+  }
+
   if (activeFeature === "login") {
-  return <Login onBack={goHome} />;
-}
+    return <Login onBack={goHome} />;
+  }
 
   return <HomeScreen onOpen={openFeature} />;
 }

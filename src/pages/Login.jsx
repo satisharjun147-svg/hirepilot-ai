@@ -1,3 +1,5 @@
+import { db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -12,9 +14,37 @@ export default function Login({ onBack }) {
         provider
       );
 
+      const userRef = doc(db, "users", result.user.uid);
+      const existingUser = await getDoc(userRef);
+      const existingData = existingUser.exists() ? existingUser.data() : {};
+
+      await setDoc(
+        userRef,
+        {
+          uid: result.user.uid,
+          name: result.user.displayName,
+          email: result.user.email,
+          photo: result.user.photoURL,
+
+          plan: existingData.plan || "free",
+
+          resumeCount: existingData.resumeCount ?? 0,
+          coverLetterCount: existingData.coverLetterCount ?? 0,
+          atsCount: existingData.atsCount ?? 0,
+
+          resumeLimit: existingData.resumeLimit ?? 5,
+          coverLetterLimit: existingData.coverLetterLimit ?? 3,
+          atsLimit: existingData.atsLimit ?? 5,
+
+          createdAt: existingData.createdAt || new Date().toISOString()
+        },
+        { merge: true }
+      );
+
       localStorage.setItem(
   "user",
   JSON.stringify({
+    uid: result.user.uid,
     name: result.user.displayName,
     email: result.user.email,
     photo: result.user.photoURL,

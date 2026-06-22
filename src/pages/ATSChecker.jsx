@@ -3,6 +3,15 @@ import ToolShell from "../components/ToolShell";
 import FileUploadBox from "../components/FileUploadBox";
 import { ErrBox, Spinner, panelStyle, primaryBtn, taStyle, labelStyle } from "../components/ToolPrimitives";
 import { callGeminiJSON } from "../services/geminiService";
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  increment
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function ATSChecker({ onBack }) {
   const [resumeText, setResumeText] = useState("");
@@ -11,8 +20,32 @@ export default function ATSChecker({ onBack }) {
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
 
+  const getUserData = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user?.uid) {
+      alert("Please login first");
+      return null;
+    }
+
+    const snapshot = await getDoc(doc(db, "users", user.uid));
+    return snapshot.exists() ? snapshot.data() : null;
+  };
+
   const runCheck = async () => {
     if (!resumeText.trim()) return;
+    const userData = await getUserData();
+
+    if (!userData) return;
+
+    if (
+      userData.plan === "free" &&
+      (userData.atsCount || 0) >= (userData.atsLimit || 5)
+    ) {
+      alert("ATS limit reached. Upgrade plan.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setResult(null);
@@ -37,9 +70,54 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
       const parsed = await callGeminiJSON(prompt);
       setResult(parsed);
     } catch (err) {
-      setError("Couldn't score this resume. Please try again.");
-    }
+  console.error("ATS ERROR:", err);
+  console.error("MESSAGE:", err.message);
+
+  setError(err.message || "Couldn't score this resume.");
+}
     setLoading(false);
+  };
+
+  const saveATSReport = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+  
+      if (!user) {
+        alert("Please login first");
+        return;
+      }
+
+      // Using the safety fallback to ensure successful saves
+      const safeUserId = user.uid || user.email || "unknown_user";
+  
+      await addDoc(
+        collection(db, "atsreports"),
+        {
+          userId: safeUserId,
+          name: user.name || "Unknown",
+          email: user.email || "Unknown",
+          score: result.score,
+          missingKeywords: result.missingKeywords || [],
+          formattingIssues: result.formattingIssues || [],
+          sectionCompleteness: result.sectionCompleteness || [],
+          keywordDensity: result.keywordDensity || [],
+          recommendations: result.recommendations || [],
+          createdAt: new Date().toISOString()
+        }
+      );
+
+      await updateDoc(
+        doc(db, "users", user.uid),
+        {
+          atsCount: increment(1)
+        }
+      );
+  
+      alert("ATS Report saved successfully");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
   };
 
   const scoreColor = result ? (result.score >= 75 ? "#4ade80" : result.score >= 50 ? "#facc15" : "#f87171") : "#60a5fa";
@@ -97,6 +175,24 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
 
         {result && (
           <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1px solid #1e3a5f" }}>
+            
+            <div style={{ marginBottom: 20 }}>
+              <button
+                onClick={saveATSReport}
+                style={{
+                  background: "#16a34a",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 18px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontWeight: 700
+                }}
+              >
+                Save ATS Report
+              </button>
+            </div>
+
             <div style={{ marginBottom: 22 }}>
               <div style={{ fontSize: 12, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>ATS Score</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>

@@ -4,6 +4,15 @@ import TemplateGallery from "../components/TemplateGallery";
 import { AITip } from "../components/ToolPrimitives";
 import { TEMPLATES, STEPS, initialForm, RESUME_JSON_SHAPE, demoResume } from "../shared/resumeConstants";
 import { callGeminiForResume } from "../services/geminiService";
+import { db } from "../firebase"; // Added Firebase import
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  increment
+} from "firebase/firestore"; // Added Firestore imports
 
 export default function ResumeBuilder({ onBack }) {
   const [showGallery, setShowGallery] = useState(true);
@@ -14,6 +23,50 @@ export default function ResumeBuilder({ onBack }) {
   const [error, setError] = useState("");
   const [template, setTemplate] = useState("atsProfessional");
   const printRef = useRef(null);
+
+  // Added Save Resume Function with fallback
+  const saveResume = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      
+      // Debugging: Check what is actually stored in local storage
+      console.log("USER FROM LOCAL STORAGE:", user);
+
+      if (!user) {
+        alert("Please login first");
+        return;
+      }
+
+      // Fallback mechanism: use uid if it exists, otherwise use email
+      const safeUserId = user.uid || user.email || "unknown_user";
+
+      console.log("resumeData =", resumeData);
+
+       await addDoc(
+       collection(db, "resumes"),
+  {
+    userId: safeUserId,
+    name: resumeData?.name || form.name || "",
+    email: resumeData?.email || form.email || "",
+    template: template,
+    resumeData: resumeData || {},
+    createdAt: new Date().toISOString()
+  }
+);
+
+      await updateDoc(
+        doc(db, "users", user.uid),
+        {
+          resumeCount: increment(1)
+        }
+      );
+
+      alert("Resume saved successfully");
+    } catch (err) {
+  console.error("FULL FIREBASE ERROR:", err);
+  alert(err.message);
+}
+};
 
   if (showGallery) {
     return <TemplateGallery title="Choose a resume template to start with" onSelect={(key) => { setTemplate(key); setShowGallery(false); }} onSkip={() => setShowGallery(false)} />;
@@ -27,7 +80,31 @@ export default function ResumeBuilder({ onBack }) {
   const removeExp = (i) => setForm((f) => ({ ...f, experience: f.experience.filter((_, idx) => idx !== i) }));
   const removeEdu = (i) => setForm((f) => ({ ...f, education: f.education.filter((_, idx) => idx !== i) }));
 
+  const getUserData = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user?.uid) {
+      alert("Please login first");
+      return null;
+    }
+
+    const snapshot = await getDoc(doc(db, "users", user.uid));
+    return snapshot.exists() ? snapshot.data() : null;
+  };
+
   const generateResume = async () => {
+    const userData = await getUserData();
+
+    if (!userData) return;
+
+    if (
+      userData.plan === "free" &&
+      (userData.resumeCount || 0) >= (userData.resumeLimit || 5)
+    ) {
+      alert("Resume limit reached. Upgrade plan.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setResumeData(null);
@@ -126,7 +203,24 @@ Do not wrap the JSON in backticks. Do not include any text before or after the J
         </div>
         )}
 
-        {resumeData && <div><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}><div style={{ display: "flex", alignItems: "center", gap: 10 }}><span style={{ fontSize: 14, fontWeight: 600, color: "#4ade80" }}>✓ Resume ready</span><div style={{ display: "flex", gap: 6 }}>{Object.entries(TEMPLATES).map(([key, t]) => <div key={key} onClick={() => setTemplate(key)} style={{ width: 22, height: 22, borderRadius: "50%", background: t.accent, cursor: "pointer", border: template === key ? "2px solid #fff" : "2px solid transparent" }} />)}</div></div><div style={{ display: "flex", gap: 10 }}><button onClick={() => setResumeData(null)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid #1e3a5f", color: "#94a3b8", borderRadius: 8, padding: "9px 18px", fontSize: 13, cursor: "pointer" }}>← Edit Details</button><button onClick={generateResume} style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.4)", color: "#a78bfa", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>↻ Regenerate</button><button onClick={downloadPDF} style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", border: "none", color: "#fff", borderRadius: 8, padding: "9px 22px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>⬇ Download PDF</button></div></div><div style={{ background: "#0f172a", borderRadius: 16, padding: "32px 0", display: "flex", justifyContent: "center", border: "1px solid #1e3a5f" }}><div style={{ transform: "scale(0.95)", transformOrigin: "top center", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}><ResumeTemplate ref={printRef} data={resumeData} layout={TEMPLATES[template].layout} accent={accent} /></div></div></div>}
+        {resumeData && <div><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}><div style={{ display: "flex", alignItems: "center", gap: 10 }}><span style={{ fontSize: 14, fontWeight: 600, color: "#4ade80" }}>✓ Resume ready</span><div style={{ display: "flex", gap: 6 }}>{Object.entries(TEMPLATES).map(([key, t]) => <div key={key} onClick={() => setTemplate(key)} style={{ width: 22, height: 22, borderRadius: "50%", background: t.accent, cursor: "pointer", border: template === key ? "2px solid #fff" : "2px solid transparent" }} />)}</div></div><div style={{ display: "flex", gap: 10 }}><button onClick={() => setResumeData(null)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid #1e3a5f", color: "#94a3b8", borderRadius: 8, padding: "9px 18px", fontSize: 13, cursor: "pointer" }}>← Edit Details</button><button onClick={generateResume} style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.4)", color: "#a78bfa", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>↻ Regenerate</button>
+        {/* Added Save Button Here */}
+        <button
+          onClick={saveResume}
+          style={{
+            background: "#16a34a",
+            border: "none",
+            color: "#fff",
+            borderRadius: 8,
+            padding: "9px 22px",
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer"
+          }}
+        >
+          💾 Save Resume
+        </button>
+        <button onClick={downloadPDF} style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", border: "none", color: "#fff", borderRadius: 8, padding: "9px 22px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>⬇ Download PDF</button></div></div><div style={{ background: "#0f172a", borderRadius: 16, padding: "32px 0", display: "flex", justifyContent: "center", border: "1px solid #1e3a5f" }}><div style={{ transform: "scale(0.95)", transformOrigin: "top center", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}><ResumeTemplate ref={printRef} data={resumeData} layout={TEMPLATES[template].layout} accent={accent} /></div></div></div>}
       </div>
     </div>
   );

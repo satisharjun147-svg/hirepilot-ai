@@ -140,12 +140,6 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
   );
 
   return (
-    <>
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
-        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
-          ← Back to Home
-        </button>
-      </div>
       <ToolShell title="ATS Checker" onBack={onBack}>
         <div style={panelStyle}>
         <div style={{ marginBottom: 24 }}>
@@ -210,6 +204,7 @@ Give 3-6 missing keywords, 2-4 formatting issues, 2-4 section completeness notes
         )}
         </div>
       </ToolShell>
-    </>
   );
 }
+
+

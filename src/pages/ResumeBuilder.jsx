@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import ResumeTemplate from "../components/ResumeTemplate";
 import TemplateGallery from "../components/TemplateGallery";
-import { AITip } from "../components/ToolPrimitives";
+import { AITip, StatusMessage } from "../components/ToolPrimitives";
 import { TEMPLATES, STEPS, initialForm, RESUME_JSON_SHAPE, demoResume } from "../shared/resumeConstants";
 import { callGeminiForResume } from "../services/geminiService";
 import { db } from "../firebase"; // Added Firebase import
@@ -21,6 +21,7 @@ export default function ResumeBuilder({ onBack }) {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState(null);
   const [template, setTemplate] = useState("atsProfessional");
   const printRef = useRef(null);
 
@@ -33,11 +34,10 @@ export default function ResumeBuilder({ onBack }) {
       console.log("USER FROM LOCAL STORAGE:", user);
 
       if (!user) {
-        alert("Please login first");
+        setStatus({ type: "error", text: "Please login first to save your resume." });
         return;
       }
 
-      // Fallback mechanism: use uid if it exists, otherwise use email
       const safeUserId = user.uid || user.email || "unknown_user";
 
       console.log("resumeData =", resumeData);
@@ -54,19 +54,21 @@ export default function ResumeBuilder({ onBack }) {
   }
 );
 
-      await updateDoc(
-        doc(db, "users", user.uid),
-        {
-          resumeCount: increment(1)
-        }
-      );
+      if (user.uid) {
+        await updateDoc(
+          doc(db, "users", user.uid),
+          {
+            resumeCount: increment(1)
+          }
+        );
+      }
 
-      alert("Resume saved successfully");
+      setStatus({ type: "success", text: "Resume saved successfully." });
     } catch (err) {
-  console.error("FULL FIREBASE ERROR:", err);
-  alert(err.message);
-}
-};
+      console.error("FULL FIREBASE ERROR:", err);
+      setStatus({ type: "error", text: err.message || "Could not save the resume right now." });
+    }
+  };
 
   if (showGallery) {
     return <TemplateGallery title="Choose a resume template to start with" onSelect={(key) => { setTemplate(key); setShowGallery(false); }} onSkip={() => setShowGallery(false)} />;
@@ -95,18 +97,22 @@ export default function ResumeBuilder({ onBack }) {
   const generateResume = async () => {
     const userData = await getUserData();
 
-    if (!userData) return;
+    if (!userData) {
+      setStatus({ type: "error", text: "Please login first to generate a resume." });
+      return;
+    }
 
     if (
       userData.plan === "free" &&
       (userData.resumeCount || 0) >= (userData.resumeLimit || 5)
     ) {
-      alert("Resume limit reached. Upgrade plan.");
+      setStatus({ type: "error", text: "Resume limit reached. Upgrade your plan to continue." });
       return;
     }
 
     setLoading(true);
     setError("");
+    setStatus(null);
     setResumeData(null);
     try {
       const prompt = `You are a professional resume writer. Based on the information below, produce a polished, ATS-friendly resume.
@@ -136,8 +142,10 @@ Do not wrap the JSON in backticks. Do not include any text before or after the J
 
       const parsed = await callGeminiForResume(prompt);
       setResumeData(parsed);
+      setStatus({ type: "success", text: "Resume generated successfully." });
     } catch (err) {
       setError("Failed to generate resume. The AI response couldn't be read — please try again.");
+      setStatus({ type: "error", text: "Failed to generate resume. Please try again." });
     }
     setLoading(false);
   };
@@ -155,20 +163,17 @@ Do not wrap the JSON in backticks. Do not include any text before or after the J
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", minHeight: "100vh", background: "linear-gradient(135deg, #020817 0%, #0a1628 50%, #020817 100%)", color: "#e2e8f0" }}>
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "16px 24px 0" }}>
-        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
-          ← Back to Home
-        </button>
-      </div>
       <div style={{ borderBottom: "1px solid #1e3a5f", padding: "20px 24px", background: "rgba(15,23,42,0.8)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <button onClick={onBack} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 14, cursor: "pointer" }}>← Home</button>
+          <div style={{ display: "flex", gap: 10 }}><button onClick={() => window.history.length > 1 ? window.history.back() : onBack()} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(148,163,184,0.2)", color: "#e2e8f0", borderRadius: 999, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 6px 18px rgba(2,6,23,0.18)", transition: "transform 180ms ease, border-color 180ms ease" }}>← Back</button><button onClick={onBack} style={{ background: "linear-gradient(135deg,#0ea5e9,#14b8a6)", border: "none", color: "#02111f", borderRadius: 999, padding: "8px 14px", fontSize: 13, fontWeight: 900, cursor: "pointer", boxShadow: "0 10px 24px rgba(14,165,233,0.24)", transition: "transform 180ms ease, box-shadow 180ms ease" }}>Home</button></div>
           <div style={{ fontWeight: 700, fontSize: 16 }}>Create Resume From Scratch</div>
           <div style={{ width: 60 }} />
         </div>
       </div>
 
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px" }}>
+        {status && <StatusMessage type={status.type} text={status.text} />}
+
         {!resumeData && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, marginBottom: 40, flexWrap: "wrap" }}>
             {STEPS.map((s, i) => (
@@ -225,3 +230,4 @@ Do not wrap the JSON in backticks. Do not include any text before or after the J
     </div>
   );
 }
+

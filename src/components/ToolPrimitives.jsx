@@ -17,6 +17,22 @@ export function ErrBox({ msg }) {
   return <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: 14, color: "#f87171", fontSize: 13.5, marginTop: 16 }}>{msg}</div>;
 }
 
+export function StatusMessage({ type = "info", text }) {
+  const colors = {
+    success: { bg: "rgba(22,163,74,0.12)", border: "rgba(74,222,128,0.3)", color: "#4ade80" },
+    error: { bg: "rgba(239,68,68,0.12)", border: "rgba(248,113,113,0.3)", color: "#f87171" },
+    info: { bg: "rgba(14,165,233,0.12)", border: "rgba(125,211,252,0.26)", color: "#bae6fd" },
+  };
+
+  const style = colors[type] || colors.info;
+
+  return (
+    <div style={{ background: style.bg, border: `1px solid ${style.border}`, borderRadius: 10, padding: "12px 14px", color: style.color, fontSize: 13.5, marginTop: 12, lineHeight: 1.5 }}>
+      {text}
+    </div>
+  );
+}
+
 export function AITip({ text }) {
   return (
     <div style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "rgba(250,204,21,0.06)", border: "1px solid rgba(250,204,21,0.2)", borderRadius: 10, padding: 14, marginTop: 18 }}>

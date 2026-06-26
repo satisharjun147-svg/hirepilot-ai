@@ -44,6 +44,89 @@
   font-size: 14px;
 }
 
+.page-transition {
+  animation: pageFadeUp 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.tool-shell-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.tool-shell-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: start;
+  flex-wrap: wrap;
+}
+
+.tool-shell-title {
+  justify-self: center;
+  text-align: center;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.tool-shell-spacer {
+  justify-self: end;
+  width: 80px;
+}
+
+.app-loading-state {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #f8fafc;
+  background: linear-gradient(135deg, #020817, #0a1628);
+  font-weight: 700;
+}
+
+@keyframes pageFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 860px) {
+  .home-workspace-grid,
+  .home-hero-grid,
+  .home-two-column {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .tool-shell-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-shell-actions,
+  .tool-shell-title,
+  .tool-shell-spacer {
+    justify-self: start;
+  }
+
+  .tool-shell-spacer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

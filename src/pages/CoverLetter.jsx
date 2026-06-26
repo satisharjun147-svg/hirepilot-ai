@@ -20,7 +20,7 @@ export default function CoverLetter({ onBack }) {
   const [jobDesc, setJobDesc] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [tone, setTone] = useState("professional");
-  const [template, setTemplate] = useState("modern_blue");
+  const [template, setTemplate] = useState("atsProfessional");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [letter, setLetter] = useState("");
@@ -121,12 +121,6 @@ Write a complete cover letter, 3-4 paragraphs, that connects the candidate's rea
   };
 
   return (
-    <>
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0" }}>
-        <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 14, marginBottom: 20 }}>
-          ← Back to Home
-        </button>
-      </div>
       <ToolShell onBack={onBack} title="Cover Letter Generator">
         <div style={panelStyle}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#f1f5f9" }}>Generate a tailored cover letter</h2>
@@ -239,6 +233,7 @@ Write a complete cover letter, 3-4 paragraphs, that connects the candidate's rea
           )}
         </div>
       </ToolShell>
-    </>
   );
 }
+
+

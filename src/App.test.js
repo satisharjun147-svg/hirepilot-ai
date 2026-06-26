@@ -1,8 +1,15 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe("App routing", () => {
+  beforeEach(() => {
+    window.history.pushState({}, "", "/");
+  });
+
+  test("renders the ATS checker screen when the URL requests it", () => {
+    window.history.pushState({}, "", "/?feature=ats");
+    render(<App />);
+
+    expect(screen.getByText(/ATS Checker/i)).toBeInTheDocument();
+  });
 });

@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
 import { ErrBox, StatusMessage } from "./ToolPrimitives";
-import { GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf";
+// FIX 1: Import directly from pdfjs-dist, NOT the legacy folder
+import * as pdfjsLib from "pdfjs-dist";
 
+// FIX 2: Use the CDN link instead of a local .mjs file so Vercel's bundler ignores it
 if (typeof window !== "undefined") {
-  GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 }
 
 const MAX_FILE_SIZE_MB = 12;
@@ -31,7 +33,6 @@ export async function extractTextFromFile(file) {
 
   try {
     if (lower.endsWith(".pdf")) {
-      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib
         .getDocument({

@@ -248,6 +248,17 @@ export default function HomeScreen({ onOpen }) {
               <p style={{ color: "#cbd5e1", maxWidth: 640, fontSize: 17, lineHeight: 1.7, margin: 0 }}>
                 HirePilot helps you create ATS-friendly resumes, tailored letters, LinkedIn copy, and interview answers from one polished workspace.
               </p>
+              <div style={{ marginTop: 20, padding: "18px 20px", borderRadius: 16, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(148,163,184,0.16)", maxWidth: 700 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: 8 }}>
+                  AI-powered job application tools
+                </div>
+                <h2 style={{ margin: "0 0 8px", fontSize: 24, lineHeight: 1.25, color: "#f8fafc" }}>
+                  AI resume builder, ATS checker, and cover letter generator in one place.
+                </h2>
+                <p style={{ margin: 0, color: "#cbd5e1", fontSize: 15, lineHeight: 1.65 }}>
+                  Use HirePilot AI to build a resume with AI, improve an existing resume, optimize your LinkedIn profile, and prepare for interviews faster.
+                </p>
+              </div>
               <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap" }}>
                 <button onClick={() => onOpen("resume")} style={{ ...brand.button, background: "linear-gradient(135deg,#0ea5e9,#14b8a6)", color: "#02111f", padding: "14px 22px" }}>
                   Build My Resume Free

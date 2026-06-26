@@ -3,10 +3,9 @@ import { ErrBox, StatusMessage } from "./ToolPrimitives";
 // FIX 1: Import directly from pdfjs-dist, NOT the legacy folder
 import * as pdfjsLib from "pdfjs-dist";
 
-// This tells PDF.js to ignore local bundling and pull directly from the CDN.
-// This prevents Vercel from trying to resolve the missing .mjs file.
 if (typeof window !== "undefined") {
-  GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  // This bypasses the build-time path resolution error by using a static CDN URL
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 }
 const MAX_FILE_SIZE_MB = 12;
 

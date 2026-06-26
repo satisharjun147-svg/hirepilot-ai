@@ -3,11 +3,11 @@ import { ErrBox, StatusMessage } from "./ToolPrimitives";
 // FIX 1: Import directly from pdfjs-dist, NOT the legacy folder
 import * as pdfjsLib from "pdfjs-dist";
 
-// FIX 2: Use the CDN link instead of a local .mjs file so Vercel's bundler ignores it
+// This tells PDF.js to ignore local bundling and pull directly from the CDN.
+// This prevents Vercel from trying to resolve the missing .mjs file.
 if (typeof window !== "undefined") {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 }
-
 const MAX_FILE_SIZE_MB = 12;
 
 function cleanExtractedText(text) {
